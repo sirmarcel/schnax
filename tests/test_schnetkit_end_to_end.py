@@ -23,6 +23,8 @@ class EndToEndTest(TestCase):
     def setUp(self):
         schnet = Calculator(self.weights_file, skin=0.0, energies=True, stress=True)
         atoms = read(self.geometry_file)
+        atoms.rattle(stdev=1.0, seed=1)
+
         preds = schnet.calculate(atoms)
         self.schnet_energy = preds["energy"]
         self.schnet_energies = preds["energies"]
@@ -30,6 +32,8 @@ class EndToEndTest(TestCase):
 
     def test_energy_equality(self):
         atoms = read(self.geometry_file)
+
+        atoms.rattle(stdev=1.0, seed=1)
         R, Z, box = utils.atoms_to_input(atoms)
 
         params, neighbor_fn, init_fn, apply_fn = initialize_from_schnetkit_model(self.weights_file,

@@ -40,6 +40,8 @@ class CFConv(hk.Module):
 
         # (n_atoms, n_filters) -> (n_atoms * max_occupancy, n_filters)
         y = jnp.take_along_axis(y, indices=nbh, axis=0)
+        # take_along_axis changed behaviour: now returns nans for out of bounds!
+        y = jnp.nan_to_num(y, nan=0.0) # doesn't matter -- gets masked
 
         # (n_atoms * max_occupancy, n_filters) -> (n_atoms, max_occupancy, n_filters)
         y = jnp.reshape(y, (nbh_size[0], nbh_size[1], -1))
